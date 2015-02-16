@@ -1,0 +1,31 @@
+{
+    "name": "jameswmcnab/config-db",
+    "description": "Database config loader for Laravel, for simple key=>value configuration.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "James William McNab",
+            "email": "james@jameswmcnab.com",
+            "homepage": "http://www.jameswmcnab.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.2.*"
+    },
+    "require-dev": {
+      "phpspec/phpspec": "~2.0"
+    },
+    "config": {
+      "bin-dir": "vendor/bin"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Jameswmcnab\\ConfigDb": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
