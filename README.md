@@ -19,6 +19,7 @@ Run the package migrations to create the config table:
 
 ~~~bash
 php artisan migrate --package="jameswmcnab/config-db"
+~~~
 
 Publish the package config using Artisan (If you want to change the default config table name to something other than `config`).
 
