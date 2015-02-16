@@ -6,42 +6,36 @@ store key => value pairs.
 Require this package in your `composer.json` file:
 
 ~~~json
-"jameswmcnab/config-yaml": "dev-master"
+"jameswmcnab/config-db": "dev-master"
 ~~~
 
 And add the ServiceProvider to the `providers` array in `app/config/app.php` file:
 
 ~~~php
-'Jameswmcnab\ConfigYaml\ConfigYamlServiceProvider',
+'Jameswmcnab\ConfigDb\ConfigDbServiceProvider',
 ~~~
 
-Publish the package config using Artisan (If you want to change the default YAML config file directory).
+Run the package migrations to create the config table:
 
 ~~~bash
-php artisan config:publish jameswmcnab/config-yaml
+php artisan migrate --package="jameswmcnab/config-db"
+
+Publish the package config using Artisan (If you want to change the default config table name to something other than `config`).
+
+~~~bash
+php artisan config:publish jameswmcnab/config-db
 ~~~
 
 ## Usage
 
-### Get configuration by key:
-
-~~~yaml
-# Example YAML config.yaml file
-app:
-  name: "Great App"
-  version: 1.0.2
-
-log:
-  dir: /var/log/vendor/app
-  level: debug
-
-database:
-  adapter: mysql
-  database: app_live
-  username: user
-  password: password
-~~~
+### Save configuration by key:
 
 ~~~php
-ConfigYaml::get('config.database.adapter'); // mysql
+ConfigDb::save('foo', bar);
+~~~
+
+### Get configuration by key:
+
+~~~php
+ConfigDb::get('foo'); // bar
 ~~~
