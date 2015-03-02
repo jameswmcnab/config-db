@@ -19,13 +19,6 @@ class DbLoader implements LoaderInterface {
     protected $tableName;
 
     /**
-     * The default config key prefix.
-     *
-     * @type string
-     */
-    protected $defaultPrefix = 'app';
-
-    /**
      * All of the named key hints.
      *
      * @var array
@@ -65,15 +58,14 @@ class DbLoader implements LoaderInterface {
         // as any environment folders with their specific configuration items.
         $prefix = $this->getKeyPrefix($namespace);
 
-        if (is_null($prefix))
-        {
-            return $items;
-        }
+        // The key is the group
+        $key = $group;
 
-        // First we'll get the main configuration file for the groups. Once we have
-        // that we can check for any environment specific files, which will get
-        // merged on top of the main arrays to make the environments cascade.
-        $key = "{$prefix}::{$group}";
+        // If we have a prefix then we can use that
+        if (!is_null($prefix))
+        {
+            $key .= "{$prefix}.{$key}";
+        }
 
         if ($this->configKeyExists($key))
         {
@@ -104,15 +96,14 @@ class DbLoader implements LoaderInterface {
 
         $prefix = $this->getKeyPrefix($namespace);
 
-        // To check if a group exists, we will simply get the prefix based on the
-        // namespace, and then check to see if this config key exists within that
-        // namespace. False is returned if no path exists for a namespace.
-        if (is_null($prefix))
-        {
-            return $this->exists[$key] = false;
-        }
+        // The key is the group
+        $key = $group;
 
-        $key = "{$prefix}::{$group}";
+        // If we have a prefix then we can use that
+        if (!is_null($prefix))
+        {
+            $key .= "{$prefix}.{$key}";
+        }
 
         // Finally, we can simply check if this key exists our config
         // database table. We will also cache the value in an array so
@@ -134,15 +125,14 @@ class DbLoader implements LoaderInterface {
     {
         $prefix = $this->getKeyPrefix($namespace);
 
-        if (is_null($prefix))
-        {
-            return false;
-        }
+        // The key is the group
+        $key = $group;
 
-        // First we'll get the main configuration file for the groups. Once we have
-        // that we can check for any environment specific files, which will get
-        // merged on top of the main arrays to make the environments cascade.
-        $key = "{$prefix}::{$group}";
+        // If we have a prefix then we can use that
+        if (!is_null($prefix))
+        {
+            $key .= "{$prefix}.{$key}";
+        }
 
         return $this->table()->insert(['key' => $key, 'value' => $value]);
     }
@@ -190,7 +180,7 @@ class DbLoader implements LoaderInterface {
     {
         if (is_null($namespace))
         {
-            return $this->defaultPrefix;
+            return null;
         }
         elseif (isset($this->hints[$namespace]))
         {
@@ -206,7 +196,7 @@ class DbLoader implements LoaderInterface {
      */
     protected function configKeyExists($key)
     {
-
+        return $this->table()->where('key', '=', $key)->exists();
     }
 
 }

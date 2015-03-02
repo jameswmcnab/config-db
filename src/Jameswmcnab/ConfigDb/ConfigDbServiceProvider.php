@@ -20,7 +20,14 @@ class ConfigDbServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-        $this->package('jameswmcnab/config-db');
+        // Publish config
+        $configPath = __DIR__.'/../../config/config-db.php';
+        $this->publishes([$configPath => config_path('config-db.php')], 'config');
+
+        // Publish migrations
+        $this->publishes([
+            __DIR__.'/../../database/migrations/' => base_path('/database/migrations')
+        ], 'migrations');
     }
 
 	/**
@@ -57,9 +64,12 @@ class ConfigDbServiceProvider extends ServiceProvider {
      */
     protected function registerDefaultLoader()
     {
+        $configPath = __DIR__.'/../../config/config-db.php';
+        $this->mergeConfigFrom($configPath, 'config-db');
+
         $this->app->bindShared('Jameswmcnab\ConfigDb\LoaderInterface', function(Application $app)
         {
-            $tableName = $app['config']['config-db::table'];
+            $tableName = $app['config']['config-db.table'];
 
             return new DbLoader($app['db'], $tableName);
         });
