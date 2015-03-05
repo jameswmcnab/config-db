@@ -75,12 +75,20 @@ class Repository extends NamespacedItemResolver implements RepositoryInterface {
      * @param  string  $key
      * @param  mixed   $value
      * @return bool
+     * @throws ConfigException
      */
-    public function save($key, $value)
+    public function set($key, $value)
     {
         list($namespace, $group, $item) = $this->parseKey($key);
 
-        return $this->loader->save($group, $value);
+        if (is_null($item))
+        {
+            throw new ConfigException('The key should contain a group');
+        }
+
+        $key = "{$group}.{$item}";
+
+        return $this->loader->set($key, $value, $namespace);
     }
 
     /**
@@ -118,29 +126,6 @@ class Repository extends NamespacedItemResolver implements RepositoryInterface {
         $namespace = $namespace ?: '*';
 
         return $namespace.'::'.$group;
-    }
-
-    /**
-     * Add a new namespace to the loader.
-     *
-     * @param  string  $namespace
-     * @param  string  $hint
-     * @return void
-     */
-    public function addNamespace($namespace, $hint)
-    {
-        $this->loader->addNamespace($namespace, $hint);
-    }
-
-    /**
-     * Returns all registered namespaces with the config
-     * loader.
-     *
-     * @return array
-     */
-    public function getNamespaces()
-    {
-        return $this->loader->getNamespaces();
     }
 
     /**

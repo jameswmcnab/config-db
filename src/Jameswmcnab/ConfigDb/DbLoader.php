@@ -1,8 +1,9 @@
 <?php namespace Jameswmcnab\ConfigDb;
 
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Support\NamespacedItemResolver;
 
-class DbLoader implements LoaderInterface {
+class DbLoader extends NamespacedItemResolver implements LoaderInterface {
 
     /**
      * The database manager instance.
@@ -17,13 +18,6 @@ class DbLoader implements LoaderInterface {
      * @type string
      */
     protected $tableName;
-
-    /**
-     * The default config key prefix.
-     *
-     * @type string
-     */
-    protected $defaultPrefix = 'app';
 
     /**
      * All of the named key hints.
@@ -50,34 +44,42 @@ class DbLoader implements LoaderInterface {
     }
 
     /**
+     * Get a query builder instance for the config table.
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
+    protected function table()
+    {
+        return $this->db->connection()->table($this->tableName);
+    }
+
+    /**
      * Load the configuration group for the key.
      *
      * @param  string $group
      * @param  string $namespace
      * @return null|string|array
      */
-    public function load($group, $namespace = null)
+    public function load($group, $namespace)
     {
         $items = null;
 
-        // First we'll get the root configuration path for the environment which is
-        // where all of the configuration files live for that namespace, as well
-        // as any environment folders with their specific configuration items.
+        // Get database key prefix
         $prefix = $this->getKeyPrefix($namespace);
 
-        if (is_null($prefix))
-        {
-            return $items;
-        }
+        // Set database key
+        $databaseKey = "{$prefix}{$group}";
 
-        // First we'll get the main configuration file for the groups. Once we have
-        // that we can check for any environment specific files, which will get
-        // merged on top of the main arrays to make the environments cascade.
-        $key = "{$prefix}::{$group}";
+        // Get items matching database key
+        $config = $this->table()->where('key', 'LIKE', $databaseKey.'%')->lists('value', 'key');
 
-        if ($this->configKeyExists($key))
+        if ($config)
         {
-            $items = $this->table()->pluck($key);
+            foreach ($config as $key => $value)
+            {
+                list(, , $key) = $this->parseKey($key);
+                array_set($items, $key, $value);
+            }
         }
 
         return $items;
@@ -90,7 +92,7 @@ class DbLoader implements LoaderInterface {
      * @param  string $namespace
      * @return bool
      */
-    public function exists($group, $namespace = null)
+    public function exists($group, $namespace)
     {
         $key = $group.$namespace;
 
@@ -102,23 +104,24 @@ class DbLoader implements LoaderInterface {
             return $this->exists[$key];
         }
 
-        $prefix = $this->getKeyPrefix($namespace);
-
         // To check if a group exists, we will simply get the prefix based on the
         // namespace, and then check to see if this config key exists within that
         // namespace. False is returned if no path exists for a namespace.
-        if (is_null($prefix))
+        if (is_null($namespace))
         {
             return $this->exists[$key] = false;
         }
 
-        $key = "{$prefix}::{$group}";
+        $prefix = $this->getKeyPrefix($namespace);
+
+        // Set database key
+        $databaseKey = "{$prefix}{$group}";
 
         // Finally, we can simply check if this key exists our config
         // database table. We will also cache the value in an array so
         // we don't have to go through this process again on subsequent
         // checks for the existing of the database config value.
-        $exists = $this->configKeyExists($key);
+        $exists = $this->configKeyExists($databaseKey);
 
         return $this->exists[$key] = $exists;
     }
@@ -126,87 +129,83 @@ class DbLoader implements LoaderInterface {
     /**
      * Save a single key => value pair into the database
      *
-     * @param  string  $group
+     * @param  string  $key
      * @param  mixed   $value
+     * @param  string  $namespace
      * @return bool
      */
-    public function save($group, $value, $namespace = null)
+    public function set($key, $value, $namespace = null)
     {
+        // Get database key prefix
         $prefix = $this->getKeyPrefix($namespace);
 
-        if (is_null($prefix))
+        // Convert non-array values to array
+        if (!is_array($value))
         {
-            return false;
+            $value = [$key => $value];
         }
 
-        // First we'll get the main configuration file for the groups. Once we have
-        // that we can check for any environment specific files, which will get
-        // merged on top of the main arrays to make the environments cascade.
-        $key = "{$prefix}::{$group}";
+        // Convert array to dot.syntax key=>value pairs
+        $config = array_dot($value, "{$prefix}::{$key}.");
+
+        // Store all of the config values in the database, inside a transaction
+        return $this->db->connection()->transaction(function() use ($config)
+        {
+            return $this->storeMultiple($config);
+        });
+    }
+
+    /**
+     * Store an array of key => value pairs in the config database.
+     *
+     * @param  array  $config
+     * @return bool
+     */
+    protected function storeMultiple(array $config)
+    {
+        foreach ($config as $key => $value)
+        {
+            $this->store($key, $value);
+        }
+    }
+
+    /**
+     * Store a value in the config table by key.
+     *
+     * @param  string  $key
+     * @param  mixed   $key
+     * @return bool|int
+     */
+    protected function store($key, $value)
+    {
+        if ($this->configKeyExists($key))
+        {
+            return $this->table()->where('key', '=', $key)->update(['value' => $value]);
+        }
 
         return $this->table()->insert(['key' => $key, 'value' => $value]);
     }
 
     /**
-     * Add a new namespace to the loader.
-     *
-     * @param  string  $namespace
-     * @param  string  $hint
-     * @return void
-     */
-    public function addNamespace($namespace, $hint)
-    {
-        $this->hints[$namespace] = $hint;
-    }
-
-    /**
-     * Returns all registered namespaces with the config
-     * loader.
-     *
-     * @return array
-     */
-    public function getNamespaces()
-    {
-        return $this->hints;
-    }
-
-    /**
-     * Get a query builder instance for the config table.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
-    protected function table()
-    {
-        return $this->db->connection()->table($this->tableName);
-    }
-
-    /**
-     * Get the database key prefix for a namespace.
-     *
-     * @param  string  $namespace
-     * @return string
-     */
-    protected function getKeyPrefix($namespace)
-    {
-        if (is_null($namespace))
-        {
-            return $this->defaultPrefix;
-        }
-        elseif (isset($this->hints[$namespace]))
-        {
-            return $this->hints[$namespace];
-        }
-    }
-
-    /**
-     * Check if a key exists config table.
+     * Check if a key exists in the config table.
      *
      * @param $key
      * @return bool
      */
     protected function configKeyExists($key)
     {
+        return $this->table()->where('key','LIKE', $key . '%')->exists();
+    }
 
+    /**
+     * @param $namespace
+     * @return null|string
+     */
+    protected function getKeyPrefix($namespace)
+    {
+        $prefix = $namespace ? $namespace.'::' : null;
+
+        return $prefix;
     }
 
 }

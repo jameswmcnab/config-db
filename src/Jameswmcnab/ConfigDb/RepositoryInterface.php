@@ -28,21 +28,13 @@ interface RepositoryInterface {
     public function get($key, $default = null);
 
     /**
-     * Add a new namespace to the loader.
+     * Save a single key => value pair into the database
      *
-     * @param  string $namespace
-     * @param  string $hint
-     * @return void
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return bool
      */
-    public function addNamespace($namespace, $hint);
-
-    /**
-     * Returns all registered namespaces with the config
-     * loader.
-     *
-     * @return array
-     */
-    public function getNamespaces();
+    public function set($key, $value);
 
     /**
      * Get the loader implementation.
