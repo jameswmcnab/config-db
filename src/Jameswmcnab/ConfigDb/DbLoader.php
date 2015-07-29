@@ -134,7 +134,12 @@ class DbLoader implements LoaderInterface {
             $key .= "{$prefix}.{$key}";
         }
 
-        return $this->table()->insert(['key' => $key, 'value' => $value]);
+        // Delete the existing key and insert the new data
+        return $this->db->connection()->transaction(function() use ($key, $value) {
+            $this->table()->where('key', '=', $key)->delete();
+
+            return $this->table()->insert(['key' => $key, 'value' => $value]);
+        });
     }
 
     /**
