@@ -21,8 +21,9 @@ class ConfigDbServiceProvider extends ServiceProvider {
     public function boot()
     {
         // Publish config
-        $configPath = __DIR__.'/../../config/config-db.php';
-        $this->publishes([$configPath => config_path('config-db.php')], 'config');
+        $this->publishes([
+            __DIR__.'/../../config/config-db.php' => config_path('config-db.php')
+        ], 'config');
 
         // Publish migrations
         $this->publishes([
@@ -67,7 +68,7 @@ class ConfigDbServiceProvider extends ServiceProvider {
         $configPath = __DIR__.'/../../config/config-db.php';
         $this->mergeConfigFrom($configPath, 'config-db');
 
-        $this->app->bindShared('Jameswmcnab\ConfigDb\LoaderInterface', function(Application $app)
+        $this->app->singleton('Jameswmcnab\ConfigDb\LoaderInterface', function(Application $app)
         {
             $tableName = $app['config']['config-db.table'];
 
@@ -82,7 +83,7 @@ class ConfigDbServiceProvider extends ServiceProvider {
      */
     protected function registerDefaultRepository()
     {
-        $this->app->bindShared('Jameswmcnab\ConfigDb\RepositoryInterface', function(Application $app)
+        $this->app->singleton('Jameswmcnab\ConfigDb\RepositoryInterface', function(Application $app)
         {
             return new Repository($app->make('Jameswmcnab\ConfigDb\LoaderInterface'));
         });
