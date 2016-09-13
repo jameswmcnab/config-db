@@ -69,7 +69,7 @@ class DbLoader implements LoaderInterface {
 
         if ($this->configKeyExists($key))
         {
-            $items = $this->table()->pluck('value');
+            $items = $this->table()->where('key', 'LIKE', $key . '%')->pluck('value');
         }
 
         return $items;
