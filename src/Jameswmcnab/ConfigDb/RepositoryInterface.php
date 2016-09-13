@@ -28,6 +28,15 @@ interface RepositoryInterface {
     public function get($key, $default = null);
 
     /**
+     * Save a single key => value pair into the database
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return bool
+     */
+    public function save($key, $value);
+
+    /**
      * Add a new namespace to the loader.
      *
      * @param  string $namespace
