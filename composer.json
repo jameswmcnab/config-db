@@ -21,9 +21,6 @@
       "bin-dir": "vendor/bin"
     },
     "autoload": {
-        "classmap": [
-            "src/database/migrations"
-        ],
         "psr-0": {
             "Jameswmcnab\\ConfigDb": "src/"
         }
