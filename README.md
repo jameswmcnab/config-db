@@ -35,7 +35,7 @@ Then edit `config/config-db.php` in your main application directory.
 ### Save configuration by key:
 
 ```php
-ConfigDb::save('foo', bar);
+ConfigDb::save('foo', 'bar');
 ```
 
 ### Get configuration by key:

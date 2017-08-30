@@ -1,19 +1,11 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class CreateConfigTable extends Migration {
-
-    /**
-     * @type string
-     */
-    private $tableName;
-
-    public function __construct()
-    {
-        $this->tableName = Config::get('config-db.table');
-    }
+class CreateConfigTable extends Migration
+{
 
 	/**
 	 * Run the migrations.
@@ -22,11 +14,9 @@ class CreateConfigTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create($this->tableName, function(Blueprint $table)
-		{
+		Schema::create($this->tableName(), function(Blueprint $table) {
 			$table->string('key');
             $table->text('value');
-
             $table->primary('key');
 		});
 	}
@@ -38,7 +28,15 @@ class CreateConfigTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop($this->tableName);
+		Schema::drop($this->tableName());
 	}
+
+    /**
+     * @return string
+     */
+	private function tableName()
+    {
+        return config('config-db.table');
+    }
 
 }
