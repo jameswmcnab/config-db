@@ -15,20 +15,20 @@ And add the ServiceProvider to the `providers` array in `app/config/app.php` fil
 'Jameswmcnab\ConfigDb\ConfigDbServiceProvider',
 ```
 
-Publish the package migrations and run to create the config table:
-
-```bash
-php artisan vendor:publish --tag=migrations
-php artisan migrate
-```
-
-Publish the package config using Artisan (If you want to change the default config table name to something other than `config`).
+Publish the package config using Artisan (if you want to change the default config table name to something other 
+than `config`).
 
 ```bash
 php artisan vendor:publish --tag=config
 ```
 
 Then edit `config/config-db.php` in your main application directory.
+
+Then run the migrations to create the database table:
+
+```bash
+php artisan migrate
+```
 
 ## Usage
 
