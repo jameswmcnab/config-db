@@ -26,9 +26,7 @@ class ConfigDbServiceProvider extends ServiceProvider {
         ], 'config');
 
         // Publish migrations
-        $this->publishes([
-            __DIR__.'/../database/migrations/' => base_path('/database/migrations')
-        ], 'migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/');
     }
 
 	/**

@@ -1,5 +1,6 @@
-<?php namespace Jameswmcnab\ConfigDb; 
+<?php namespace Jameswmcnab\ConfigDb;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\NamespacedItemResolver;
 
 class Repository extends NamespacedItemResolver implements RepositoryInterface {
@@ -65,8 +66,13 @@ class Repository extends NamespacedItemResolver implements RepositoryInterface {
         $collection = $this->getCollection($group, $namespace);
 
         $this->load($group, $namespace, $collection);
+        $value = $this->items[$collection];
 
-        return array_get($this->items[$collection], $item, $default);
+        if (Arr::accessible($value)) {
+            return Arr::get($value, $item, $default);
+        }
+
+        return (!is_null($value) && !$item) ? $value : $default;
     }
 
     /**

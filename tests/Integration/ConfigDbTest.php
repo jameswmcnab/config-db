@@ -2,10 +2,13 @@
 
 namespace Jameswmcnab\ConfigDb\Tests\Integration;
 
+use Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase;
 use Jameswmcnab\ConfigDb\Facades\ConfigDb;
 
 class ConfigDbTest extends TestCase
 {
+
+    use InteractsWithDatabase;
 
     /**
      * @return array
@@ -27,13 +30,12 @@ class ConfigDbTest extends TestCase
     {
         ConfigDb::save('foo', $value);
 
-        $this->seeInDatabase('config', ['key' => 'foo', 'value' => $value]);
+        $this->assertDatabaseHas('config', ['key' => 'foo', 'value' => $value]);
         $this->assertEquals((string) $value, ConfigDb::get('foo'));
     }
 
     public function testGetWithDefault()
     {
-        $this->markTestIncomplete('@todo this fails and it appears to have never worked.');
         $this->assertSame('bar', ConfigDb::get('foo', 'bar'));
     }
 
@@ -69,7 +71,6 @@ class ConfigDbTest extends TestCase
      */
     public function testHas($value)
     {
-        $this->markTestIncomplete('@todo this fails and it appears to have never worked.');
         $this->assertFalse(ConfigDb::has('foo'));
         ConfigDb::save('foo', $value);
         $this->assertTrue(ConfigDb::has('foo'));

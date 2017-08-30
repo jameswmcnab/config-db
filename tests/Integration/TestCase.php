@@ -15,10 +15,7 @@ class TestCase extends BaseTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->loadMigrationsFrom([
-            '--database' => 'testbench',
-            '--realpath' => realpath(__DIR__  . '/../../database/migrations'),
-        ]);
+        $this->artisan('migrate', ['--database' => 'testbench']);
     }
 
     /**
