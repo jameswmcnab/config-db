@@ -24,5 +24,4 @@ class ConfigDb extends Facade
     {
         return 'config-db';
     }
-
 }

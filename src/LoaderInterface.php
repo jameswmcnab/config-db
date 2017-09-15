@@ -1,6 +1,7 @@
 <?php namespace Jameswmcnab\ConfigDb;
 
-interface LoaderInterface {
+interface LoaderInterface
+{
 
     /**
      * Load the configuration group for the key.
@@ -46,5 +47,4 @@ interface LoaderInterface {
      * @return array
      */
     public function getNamespaces();
-
 }

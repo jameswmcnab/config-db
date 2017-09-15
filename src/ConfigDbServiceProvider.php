@@ -4,14 +4,15 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 
-class ConfigDbServiceProvider extends ServiceProvider {
+class ConfigDbServiceProvider extends ServiceProvider
+{
 
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
+    /**
+     * Indicates if loading of the provider is deferred.
+     *
+     * @var bool
+     */
+    protected $defer = false;
 
     /**
      * Bootstrap the application events.
@@ -29,13 +30,13 @@ class ConfigDbServiceProvider extends ServiceProvider {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/');
     }
 
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
         // Register default Loader
         $this->registerDefaultLoader();
 
@@ -48,12 +49,11 @@ class ConfigDbServiceProvider extends ServiceProvider {
         });
 
         // Add facade alias
-        $this->app->booting(function()
-        {
+        $this->app->booting(function () {
             $loader = AliasLoader::getInstance();
             $loader->alias('ConfigDb', 'Jameswmcnab\ConfigDb\Facades\ConfigDb');
         });
-	}
+    }
 
     /**
      * Register default Loader
@@ -65,8 +65,7 @@ class ConfigDbServiceProvider extends ServiceProvider {
         $configPath = __DIR__ . '/../config/config-db.php';
         $this->mergeConfigFrom($configPath, 'config-db');
 
-        $this->app->singleton('Jameswmcnab\ConfigDb\LoaderInterface', function(Application $app)
-        {
+        $this->app->singleton('Jameswmcnab\ConfigDb\LoaderInterface', function (Application $app) {
             $tableName = $app['config']['config-db.table'];
 
             return new DbLoader($app['db'], $tableName);
@@ -80,20 +79,18 @@ class ConfigDbServiceProvider extends ServiceProvider {
      */
     protected function registerDefaultRepository()
     {
-        $this->app->singleton('Jameswmcnab\ConfigDb\RepositoryInterface', function(Application $app)
-        {
+        $this->app->singleton('Jameswmcnab\ConfigDb\RepositoryInterface', function (Application $app) {
             return new Repository($app->make('Jameswmcnab\ConfigDb\LoaderInterface'));
         });
     }
 
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides()
-	{
-		return array('config-db');
-	}
-
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return array('config-db');
+    }
 }

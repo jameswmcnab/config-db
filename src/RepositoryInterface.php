@@ -1,6 +1,7 @@
 <?php namespace Jameswmcnab\ConfigDb;
 
-interface RepositoryInterface {
+interface RepositoryInterface
+{
 
     /**
      * Determine if the given configuration value exists.
@@ -67,5 +68,4 @@ interface RepositoryInterface {
      * @return void
      */
     public function setLoader(LoaderInterface $loader);
-
 }

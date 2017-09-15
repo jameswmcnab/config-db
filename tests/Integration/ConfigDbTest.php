@@ -7,7 +7,6 @@ use Jameswmcnab\ConfigDb\Facades\ConfigDb;
 
 class ConfigDbTest extends TestCase
 {
-
     use InteractsWithDatabase;
 
     /**
