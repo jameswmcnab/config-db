@@ -3,7 +3,8 @@
 use Illuminate\Support\Arr;
 use Illuminate\Support\NamespacedItemResolver;
 
-class Repository extends NamespacedItemResolver implements RepositoryInterface {
+class Repository extends NamespacedItemResolver implements RepositoryInterface
+{
 
     /**
      * @type array
@@ -82,6 +83,18 @@ class Repository extends NamespacedItemResolver implements RepositoryInterface {
      * @param  mixed   $value
      * @return bool
      */
+    public function set($key, $value)
+    {
+        return $this->save($key, $value);
+    }
+
+    /**
+     * Save a single key => value pair into the database
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return bool
+     */
     public function save($key, $value)
     {
         list($namespace, $group, $item) = $this->parseKey($key);
@@ -102,8 +115,7 @@ class Repository extends NamespacedItemResolver implements RepositoryInterface {
         // If we've already loaded this collection, we will just bail out since we do
         // not want to load it again. Once items are loaded a first time they will
         // stay kept in memory within this class and not loaded from disk again.
-        if (isset($this->items[$collection]))
-        {
+        if (isset($this->items[$collection])) {
             return;
         }
 
@@ -169,5 +181,4 @@ class Repository extends NamespacedItemResolver implements RepositoryInterface {
     {
         $this->loader = $loader;
     }
-
 }

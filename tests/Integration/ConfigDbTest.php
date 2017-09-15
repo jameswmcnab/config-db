@@ -7,7 +7,6 @@ use Jameswmcnab\ConfigDb\Facades\ConfigDb;
 
 class ConfigDbTest extends TestCase
 {
-
     use InteractsWithDatabase;
 
     /**
@@ -29,6 +28,18 @@ class ConfigDbTest extends TestCase
     public function testSave($value)
     {
         ConfigDb::save('foo', $value);
+
+        $this->assertDatabaseHas('config', ['key' => 'foo', 'value' => $value]);
+        $this->assertEquals((string) $value, ConfigDb::get('foo'));
+    }
+
+    /**
+     * @param $value
+     * @dataProvider valueProvider
+     */
+    public function testSet($value)
+    {
+        ConfigDb::set('foo', $value);
 
         $this->assertDatabaseHas('config', ['key' => 'foo', 'value' => $value]);
         $this->assertEquals((string) $value, ConfigDb::get('foo'));
