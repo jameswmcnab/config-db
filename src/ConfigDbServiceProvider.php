@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use Jameswmcnab\ConfigDb\Facades\ConfigDb;
 
 class ConfigDbServiceProvider extends ServiceProvider
 {
@@ -45,13 +46,13 @@ class ConfigDbServiceProvider extends ServiceProvider
 
         // Register facade accessor
         $this->app->singleton('config-db', function (Application $app) {
-            return $app->make('Jameswmcnab\ConfigDb\RepositoryInterface');
+            return $app->make(RepositoryInterface::class);
         });
 
         // Add facade alias
         $this->app->booting(function () {
             $loader = AliasLoader::getInstance();
-            $loader->alias('ConfigDb', 'Jameswmcnab\ConfigDb\Facades\ConfigDb');
+            $loader->alias('ConfigDb', ConfigDb::class);
         });
     }
 
@@ -65,7 +66,7 @@ class ConfigDbServiceProvider extends ServiceProvider
         $configPath = __DIR__ . '/../config/config-db.php';
         $this->mergeConfigFrom($configPath, 'config-db');
 
-        $this->app->singleton('Jameswmcnab\ConfigDb\LoaderInterface', function (Application $app) {
+        $this->app->singleton(LoaderInterface::class, function (Application $app) {
             $tableName = $app['config']['config-db.table'];
 
             return new DbLoader($app['db'], $tableName);
@@ -79,8 +80,8 @@ class ConfigDbServiceProvider extends ServiceProvider
      */
     protected function registerDefaultRepository()
     {
-        $this->app->singleton('Jameswmcnab\ConfigDb\RepositoryInterface', function (Application $app) {
-            return new Repository($app->make('Jameswmcnab\ConfigDb\LoaderInterface'));
+        $this->app->singleton(RepositoryInterface::class, function (Application $app) {
+            return new Repository($app->make(LoaderInterface::class));
         });
     }
 
