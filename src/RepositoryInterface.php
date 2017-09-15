@@ -35,6 +35,15 @@ interface RepositoryInterface
      * @param  mixed   $value
      * @return bool
      */
+    public function set($key, $value);
+
+    /**
+     * Save a single key => value pair into the database
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return bool
+     */
     public function save($key, $value);
 
     /**

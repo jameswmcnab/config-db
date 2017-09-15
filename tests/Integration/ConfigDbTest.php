@@ -33,6 +33,18 @@ class ConfigDbTest extends TestCase
         $this->assertEquals((string) $value, ConfigDb::get('foo'));
     }
 
+    /**
+     * @param $value
+     * @dataProvider valueProvider
+     */
+    public function testSet($value)
+    {
+        ConfigDb::set('foo', $value);
+
+        $this->assertDatabaseHas('config', ['key' => 'foo', 'value' => $value]);
+        $this->assertEquals((string) $value, ConfigDb::get('foo'));
+    }
+
     public function testGetWithDefault()
     {
         $this->assertSame('bar', ConfigDb::get('foo', 'bar'));
