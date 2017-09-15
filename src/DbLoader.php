@@ -2,7 +2,8 @@
 
 use Illuminate\Database\DatabaseManager;
 
-class DbLoader implements LoaderInterface {
+class DbLoader implements LoaderInterface
+{
 
     /**
      * The database manager instance.
@@ -62,14 +63,12 @@ class DbLoader implements LoaderInterface {
         $key = $group;
 
         // If we have a prefix then we can use that
-        if (!is_null($prefix))
-        {
+        if (!is_null($prefix)) {
             $key .= "{$prefix}.{$key}";
         }
 
-        if ($this->configKeyExists($key))
-        {
-            $items = $this->table()->pluck('value');
+        if ($this->configKeyExists($key)) {
+            $items = $this->table()->where('key', 'LIKE', $key . '%')->value('value');
         }
 
         return $items;
@@ -89,8 +88,7 @@ class DbLoader implements LoaderInterface {
         // We'll first check to see if we have determined if this namespace and
         // group combination have been checked before. If they have, we will
         // just return the cached result so we don't have to hit the disk.
-        if (isset($this->exists[$key]))
-        {
+        if (isset($this->exists[$key])) {
             return $this->exists[$key];
         }
 
@@ -100,8 +98,7 @@ class DbLoader implements LoaderInterface {
         $key = $group;
 
         // If we have a prefix then we can use that
-        if (!is_null($prefix))
-        {
+        if (!is_null($prefix)) {
             $key .= "{$prefix}.{$key}";
         }
 
@@ -129,13 +126,12 @@ class DbLoader implements LoaderInterface {
         $key = $group;
 
         // If we have a prefix then we can use that
-        if (!is_null($prefix))
-        {
+        if (!is_null($prefix)) {
             $key .= "{$prefix}.{$key}";
         }
 
         // Delete the existing key and insert the new data
-        return $this->db->connection()->transaction(function() use ($key, $value) {
+        return $this->db->connection()->transaction(function () use ($key, $value) {
             $this->table()->where('key', '=', $key)->delete();
 
             return $this->table()->insert(['key' => $key, 'value' => $value]);
@@ -183,12 +179,9 @@ class DbLoader implements LoaderInterface {
      */
     protected function getKeyPrefix($namespace)
     {
-        if (is_null($namespace))
-        {
+        if (is_null($namespace)) {
             return null;
-        }
-        elseif (isset($this->hints[$namespace]))
-        {
+        } elseif (isset($this->hints[$namespace])) {
             return $this->hints[$namespace];
         }
     }
@@ -203,5 +196,4 @@ class DbLoader implements LoaderInterface {
     {
         return $this->table()->where('key', '=', $key)->exists();
     }
-
 }
