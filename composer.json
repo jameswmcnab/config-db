@@ -38,7 +38,7 @@
                 "Jameswmcnab\\ConfigDb\\ConfigDbServiceProvider"
             ],
             "aliases": {
-                "Debugbar": "Jameswmcnab\\ConfigDb\\Facades\\ConfigDb"
+                "ConfigDb": "Jameswmcnab\\ConfigDb\\Facades\\ConfigDb"
             }
         }
     },
