@@ -4,7 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## Unreleased
+
+### Added
+- Upgraded to Laravel 5.5.
+
+### Removed
+- No longer supports PHP 5.6 and 7.0.
+
+## [2.0.0]
 ### Added
 - Basic integration tests (under PHP 5.6, 7.0 and 7.1).
 - Add change log (`CHANGELOG.md`) and upgrade guide (`UPGRADE.md`).

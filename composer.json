@@ -10,14 +10,14 @@
         }
     ],
     "require": {
-        "php": ">=5.6.4",
-        "illuminate/support": "5.4.*",
-        "illuminate/database": "5.4.*"
+        "php": "^7.1.3",
+        "illuminate/support": "5.5.*",
+        "illuminate/database": "5.5.*"
     },
     "require-dev": {
-        "orchestra/testbench": "^3.4",
+        "orchestra/testbench": "^3.5",
         "phpspec/phpspec": "~2.0",
-        "phpunit/phpunit": "^5.7"
+        "phpunit/phpunit": "^6.5"
     },
     "autoload": {
         "psr-4": {
@@ -31,7 +31,15 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-develop": "2.x-dev"
+            "dev-develop": "3.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Jameswmcnab\\ConfigDb\\ConfigDbServiceProvider"
+            ],
+            "aliases": {
+                "Debugbar": "Jameswmcnab\\ConfigDb\\Facades\\ConfigDb"
+            }
         }
     },
     "minimum-stability": "stable",
