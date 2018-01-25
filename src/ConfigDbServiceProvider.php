@@ -1,9 +1,7 @@
 <?php namespace Jameswmcnab\ConfigDb;
 
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
-use Jameswmcnab\ConfigDb\Facades\ConfigDb;
 
 class ConfigDbServiceProvider extends ServiceProvider
 {
@@ -48,12 +46,6 @@ class ConfigDbServiceProvider extends ServiceProvider
         $this->app->singleton('config-db', function (Application $app) {
             return $app->make(RepositoryInterface::class);
         });
-
-        // Add facade alias
-        $this->app->booting(function () {
-            $loader = AliasLoader::getInstance();
-            $loader->alias('ConfigDb', ConfigDb::class);
-        });
     }
 
     /**
@@ -92,6 +84,6 @@ class ConfigDbServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return array('config-db');
+        return ['config-db'];
     }
 }
