@@ -28,5 +28,11 @@
             "Jameswmcnab\\ConfigDb": "src/"
         }
     },
-    "minimum-stability": "stable"
+    "extra": {
+        "branch-alias": {
+            "dev-1.x": "1.x-dev"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }

@@ -44,7 +44,7 @@ class ConfigDbServiceProvider extends ServiceProvider {
         $this->registerDefaultRepository();
 
         // Register facade accessor
-        $this->app['config-db'] = $this->app->share(function(Application $app)
+        $this->app->singleton('config-db', function(Application $app)
         {
             return $app->make('Jameswmcnab\ConfigDb\RepositoryInterface');
         });
@@ -67,7 +67,7 @@ class ConfigDbServiceProvider extends ServiceProvider {
         $configPath = __DIR__.'/../../config/config-db.php';
         $this->mergeConfigFrom($configPath, 'config-db');
 
-        $this->app->bindShared('Jameswmcnab\ConfigDb\LoaderInterface', function(Application $app)
+        $this->app->singleton('Jameswmcnab\ConfigDb\LoaderInterface', function(Application $app)
         {
             $tableName = $app['config']['config-db.table'];
 
@@ -82,7 +82,7 @@ class ConfigDbServiceProvider extends ServiceProvider {
      */
     protected function registerDefaultRepository()
     {
-        $this->app->bindShared('Jameswmcnab\ConfigDb\RepositoryInterface', function(Application $app)
+        $this->app->singleton('Jameswmcnab\ConfigDb\RepositoryInterface', function(Application $app)
         {
             return new Repository($app->make('Jameswmcnab\ConfigDb\LoaderInterface'));
         });
