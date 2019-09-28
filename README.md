@@ -1,3 +1,6 @@
+# Abandoned
+This package is abandoned and no longer maintained. The author suggests using the arcanedev/laravel-settings package instead.
+
 # Database configuration loader for Laravel
 
 [![Build Status](https://travis-ci.org/jameswmcnab/config-db.svg)](https://travis-ci.org/jameswmcnab/config-db)
